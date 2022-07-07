@@ -1,1 +1,1 @@
-web: ./build/install/ktor-get-started-sample/bin/com.example.ktor-deploygit
+web: ./build/install/com.example.ktor-deploy/bin/com.example.ktor-deploy
