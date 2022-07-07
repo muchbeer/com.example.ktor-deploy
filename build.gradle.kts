@@ -5,6 +5,7 @@ val logback_version: String by project
 plugins {
     application
     kotlin("jvm") version "1.7.10"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "com.muchbeer"
@@ -16,6 +17,7 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+
 repositories {
     mavenCentral()
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
@@ -24,6 +26,7 @@ repositories {
 tasks.create("stage") {
     dependsOn("installDist")
 }
+
 
 
 dependencies {
@@ -45,3 +48,4 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
+

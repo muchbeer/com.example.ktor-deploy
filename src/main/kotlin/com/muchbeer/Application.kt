@@ -15,10 +15,8 @@ import io.ktor.server.routing.*
 fun main() {
 
 val portNumber = System.getenv("PORT")?.toInt() ?: 8083
-
-//Netty, port = 8080, host = "192.168.31.23"
-embeddedServer(Netty, port = portNumber ) {
-
+val localhost = "192.168.203.57"
+embeddedServer(Netty, port = 8083, host =localhost) {
 
 
     install(ContentNegotiation) {
@@ -50,13 +48,12 @@ fun Application.module() {
         }
 
         get("/gadiel") {
-            call.response.header("content-type","application/json")
 
-            call.respond("$listTem}")
+            call.respond(listTem)
         }
         get("/schools") {
-            call.response.header("content-type","application/json")
-            call.respond("$retrieveSchool")
+
+            call.respond(retrieveSchool)
         }
     }
 
@@ -64,7 +61,6 @@ fun Application.module() {
 
 
         post("/register") {
-            call.response.header("content-type","application/json")
             val addSchool = call.receive<School>()
             val response : School = repository.insertSchool(addSchool)
 
