@@ -1,5 +1,8 @@
-package com.muchbeer
+package com.muchbeer.repository
 
+import com.africastalking.AfricasTalking
+import com.africastalking.SmsService
+import com.africastalking.sms.Recipient
 import com.muchbeer.db.SchoolTable
 import com.muchbeer.db.SchoolTable.region
 import com.muchbeer.db.SchoolTable.school
@@ -10,6 +13,7 @@ import com.muchbeer.db.UssdTable.phoneNumber
 import com.muchbeer.db.UssdTable.serviceCode
 import com.muchbeer.db.UssdTable.sessionId
 import com.muchbeer.db.UssdTable.text
+import com.muchbeer.model.SMSMessageDataModel
 import com.muchbeer.model.School
 import com.muchbeer.model.USSDModel
 import org.ktorm.database.Database
@@ -20,9 +24,10 @@ import org.ktorm.dsl.update
 import org.ktorm.entity.firstOrNull
 import org.ktorm.entity.sequenceOf
 import org.ktorm.entity.toList
+import java.io.IOException
 
 class RepositoryImpl(private val ktormDb : Database) : Repository {
-    override fun retrieveAllSchool(): List<School> {
+    override suspend fun retrieveAllSchool(): List<School> {
         return ktormDb.sequenceOf(SchoolTable).toList().map {
             School(
                 id = it.id,
@@ -33,14 +38,14 @@ class RepositoryImpl(private val ktormDb : Database) : Repository {
         }
     }
 
-    override fun findSchoolByName(name: String): School? {
+    override suspend fun findSchoolByName(name: String): School? {
         val schoolEntity = ktormDb.sequenceOf(SchoolTable).firstOrNull {
             it.school eq name
         }?.let { School(id = it.id, school = it.school, region = it.region, sex = it.sex) }
         return schoolEntity
     }
 
-    override fun insertSchool(mSchool: School): School {
+    override suspend fun insertSchool(mSchool: School): School {
         val schoolID : Int =   ktormDb.insertAndGenerateKey(SchoolTable) {
             set(school, mSchool.school)
             set(region, mSchool.region)
@@ -51,7 +56,7 @@ class RepositoryImpl(private val ktormDb : Database) : Repository {
             region = mSchool.region, sex = mSchool.sex)
     }
 
-    override fun retrieveAllUSSD(): List<USSDModel> {
+    override suspend fun retrieveAllUSSD(): List<USSDModel> {
         return ktormDb.sequenceOf(UssdTable).toList().map {
             USSDModel(
                 sessionId = it.sessionId,
@@ -63,7 +68,7 @@ class RepositoryImpl(private val ktormDb : Database) : Repository {
         }
     }
 
-    override fun findUSSDSessionById(msessionID: String): USSDModel? {
+    override suspend fun findUSSDSessionById(msessionID: String): USSDModel? {
         return ktormDb.sequenceOf(UssdTable).firstOrNull() {
             it.sessionId eq msessionID
         }?.let { USSDModel(sessionId = it.sessionId, phoneNumber = it.phoneNumber,
@@ -71,7 +76,7 @@ class RepositoryImpl(private val ktormDb : Database) : Repository {
 
     }
 
-    override fun updateSessionId(msessionID: String, mUSSD : USSDModel): USSDModel {
+    override suspend fun updateSessionId(msessionID: String, mUSSD : USSDModel): USSDModel {
         val updteType =  ktormDb.update(UssdTable) {
             set(sessionId, mUSSD.sessionId)
             set(phoneNumber, mUSSD.phoneNumber)
@@ -88,7 +93,7 @@ class RepositoryImpl(private val ktormDb : Database) : Repository {
         text = mUSSD.text)
     }
 
-    override fun insertUSSD(ussdModel: USSDModel): USSDModel {
+    override suspend fun insertUSSD(ussdModel: USSDModel): USSDModel {
         val ussdID : Int = ktormDb.insert(UssdTable) {
             set(sessionId, ussdModel.sessionId)
             set(phoneNumber, ussdModel.phoneNumber)
@@ -106,4 +111,23 @@ class RepositoryImpl(private val ktormDb : Database) : Repository {
 
 
     }
+
+    override fun sendSMS(phonNumb: String, message: String) {
+        val  USERNAME = "MyAppUsername"
+        val API_KEY = "MyAppAPIKey"
+
+        //Initialize SDK
+        AfricasTalking.initialize(USERNAME, API_KEY)
+        val sms : SmsService  = AfricasTalking.getService(AfricasTalking.SERVICE_SMS);
+        val recipients = listOf<Recipient>()
+
+        try {
+
+         //   val response  = sms.send(message="message", "AFRICASTALKING" ,arrayOf("0755022731"), true)
+        } catch (ex : Exception) {
+            ex.printStackTrace()
+        }
+    }
 }
+
+

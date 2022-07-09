@@ -1,6 +1,7 @@
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
+val koin_version: String by project
 
 plugins {
     application
@@ -20,7 +21,10 @@ application {
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap") }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+        setUrl("https://jitpack.io")
+    }
 }
 
 tasks.create("stage") {
@@ -41,9 +45,18 @@ dependencies {
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("io.ktor:ktor-server-auth-jwt:$ktor_version")
 
-    implementation ("mysql:mysql-connector-java:8.0.11")
-    implementation ("org.ktorm:ktorm-core:3.2.0")
-    implementation ("org.ktorm:ktorm-support-mysql:3.2.0")
+    implementation ("mysql:mysql-connector-java:8.0.29")
+    implementation ("org.ktorm:ktorm-core:3.5.0")
+    implementation ("org.ktorm:ktorm-support-mysql:3.5.0")
+
+    implementation("io.ktor:ktor-server-call-logging:$ktor_version")
+
+    // Koin
+    implementation ("io.insert-koin:koin-ktor:$koin_version")
+    implementation ("io.insert-koin:koin-logger-slf4j:$koin_version")
+
+    //Africastalking dependency
+    implementation ("com.github.AfricasTalkingLtd.africastalking-java:core:3.4.8")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
